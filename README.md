@@ -2,7 +2,7 @@
 
 A simple King of The Hill game. The goal is to allow user to create bot that play the game. Example of of problem can be found here [King of the hill](https://codegolf.stackexchange.com/questions/tagged/king-of-the-hill).
 
-The game implemented on this [repository](https://github.com/edmBernard/KoTH-pandemic) is a reimplementation of this [game](https://codegolf.stackexchange.com/questions/70135/koth-a-world-wide-pandemic)
+The game implemented on this [repository](https://github.com/edmBernard/KoTH-pandemic) is a reimplementation of this [game](https://codegolf.stackexchange.com/questions/70135/koth-a-world-wide-pandemic).
 
 
 ## Compilation, Tests and Documentations
@@ -19,14 +19,14 @@ This project depends on:
 ./vcpkg install spdlog cxxopts fmt
 ```
 
-### Compile , Test
+### Compilation
 
 ```bash
 mkdir build
 cd build
 # configure make with vcpkg toolchain
 cmake .. -DCMAKE_TOOLCHAIN_FILE=${VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake
-make
+cmake.exe --build . --config Release
 ```
 
 the server executable is named `koth-pandemic`
