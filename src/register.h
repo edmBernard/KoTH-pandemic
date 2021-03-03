@@ -7,21 +7,6 @@
 
 #pragma once
 
-namespace {
-std::vector<std::tuple<std::string, std::function<int(int)>>> &GetBotRegister() {
-  static std::vector<std::tuple<std::string, std::function<int(int)>>> g_bots;
-  return g_bots;
-}
-
-}
-
-class RegisterBot {
-public:
-  RegisterBot(const std::string &name, std::function<int(int)> bot) {
-    GetBotRegister().push_back({name, bot});
-  }
-};
-
 class Engine {
 public:
   Engine() {
@@ -34,6 +19,19 @@ public:
     }
   }
 
+  static std::vector<std::tuple<std::string, std::function<int(int)>>> &GetBotRegister() {
+    static std::vector<std::tuple<std::string, std::function<int(int)>>> g_bots;
+    return g_bots;
+  }
+
 private:
   int m_state = 0;
+};
+
+
+class RegisterBot {
+public:
+  RegisterBot(const std::string &name, std::function<int(int)> bot) {
+    Engine::GetBotRegister().push_back({name, bot});
+  }
 };

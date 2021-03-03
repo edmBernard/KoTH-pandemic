@@ -33,7 +33,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 # Set variable ************************************************************************************
 SET(SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-  # main.cpp should be the first to be compiled otherwise the global register don't work
   ${CMAKE_CURRENT_SOURCE_DIR}/bots/basic/basic.cpp
 )
 
