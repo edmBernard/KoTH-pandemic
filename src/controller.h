@@ -14,20 +14,26 @@
 class Controller {
 public:
   Controller(int numberRuns) : m_numberRuns(numberRuns) {
+    spdlog::info("Number of bots registered : {}", GetBotRegister().size());
+
   }
 
   void run() {
-    for (int i = 1; i <= m_numberRuns; ++i) {
-      spdlog::debug("Iteration : {:05}", i);
-      for (const auto &[name, bot] : GetBotRegister()) {
-        m_state = bot(m_state);
+
+    for (int step = 1; step <= m_numberRuns; ++step) {
+      spdlog::debug("Iteration : {:05}", step);
+
+      for (int id = 0; id < GetBotRegister().size(); ++id) {
+
+        const auto &[name, bot] = GetBotRegister()[id];
+        m_state = bot(step, id, m_state);
         std::cout << name << " m_state: " << m_state << std::endl;
       }
     }
   }
 
-  static std::vector<std::tuple<std::string, std::function<int(int)>>> &GetBotRegister() {
-    static std::vector<std::tuple<std::string, std::function<int(int)>>> g_bots;
+  static std::vector<std::tuple<std::string, std::function<int(int, int, int)>>> &GetBotRegister() {
+    static std::vector<std::tuple<std::string, std::function<int(int, int, int)>>> g_bots;
     return g_bots;
   }
 
@@ -39,7 +45,7 @@ private:
 
 class RegisterBot {
 public:
-  RegisterBot(const std::string &name, std::function<int(int)> bot) {
+  RegisterBot(const std::string &name, std::function<int(int, int, int)> bot) {
     Controller::GetBotRegister().push_back({name, bot});
   }
 };
