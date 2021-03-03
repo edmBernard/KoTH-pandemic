@@ -1,4 +1,4 @@
-#include "engine.h"
+#include "controller.h"
 
 #include <cxxopts.hpp>
 #include <fmt/core.h>
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) try {
   RegisterBot("toto", [](int input) { return input * 2; });
   RegisterBot("tutu", [](int input) { return input + 2; });
 
-  Engine engine;
+  Controller engine(result["nruns"].as<int>());
   engine.run();
 
   return EXIT_SUCCESS;

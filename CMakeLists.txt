@@ -42,4 +42,4 @@ SET(SOURCES
 #**************************************************************************************************
 # Make configuration ******************************************************************************
 add_executable(koth-pandemic ${SOURCES} ${BOTS})
-target_link_libraries(koth-pandemic -pthread -lstdc++fs fmt::fmt spdlog::spdlog)
+target_link_libraries(koth-pandemic fmt::fmt spdlog::spdlog)
