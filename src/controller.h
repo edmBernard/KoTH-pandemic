@@ -70,6 +70,25 @@ public:
       }
 
       // Phase 3: Migration
+      int healthyMigrant = 0;
+      int infectedMigrant = 0;
+      int totalMigrationRate = 0;
+      for (auto &city : cities) {
+        const int healthyToLeave = static_cast<int>(std::ceil(city.healthy * city.migrationRate / 100.f));
+        city.healthy -= healthyToLeave;
+        healthyMigrant += healthyToLeave;
+        const int infectedToLeave = static_cast<int>(std::ceil(city.infected * city.migrationRate / 100.f));
+        city.infected -= infectedToLeave;
+        infectedMigrant += infectedToLeave;
+        totalMigrationRate += city.migrationRate;
+      }
+      for (auto &city : cities) {
+        const int healthyToCome = static_cast<int>(std::ceil(healthyMigrant * city.migrationRate / float(totalMigrationRate)));
+        city.healthy += healthyToCome;
+        const int infectedToCome = static_cast<int>(std::ceil(infectedMigrant * city.migrationRate / float(totalMigrationRate)));
+        city.infected += infectedToCome;
+      }
+
 
       // Phase 4: Infection
       for (auto &city : cities) {
@@ -83,7 +102,7 @@ public:
         if (city.contagionRate == 0) {
           continue;
         }
-        const int toInfect = static_cast<int>((city.infected * city.contagionRate + 99.f) / 100.f);
+        const int toInfect = static_cast<int>(std::ceil(city.infected * city.contagionRate / 100.f));
         const int converted = city.healthy >= toInfect ? toInfect : city.healthy;
         city.infected += converted;
         city.healthy -= converted;
@@ -94,9 +113,9 @@ public:
         if (city.lethalityRate == 0) {
           continue;
         }
-        const int dead = static_cast<int>((city.infected * city.lethalityRate) / 100.f);
+        const int dead = static_cast<int>(std::floor(city.infected * city.lethalityRate / 100.f));
         decrease(city.infected, dead);
-        const int deadInIsolation = static_cast<int>((city.infectedIsolated * city.lethalityRate) / 100.f);
+        const int deadInIsolation = static_cast<int>(std::floor(city.infectedIsolated * city.lethalityRate / 100.f));
         decrease(city.infectedIsolated, deadInIsolation);
       }
 
@@ -114,7 +133,7 @@ public:
       std::shuffle(botIndex.begin(), botIndex.end(), gen);
       for (int id : botIndex) {
         const auto &[name, bot] = bots[id];
-        for (auto action : bot(step, id, 1)) {
+        for (auto action : bot(step, id, cities[id])) {
           if (!doLocalAction(action, cities[id])) {
             globalActions.push_back(action);
           };
@@ -147,15 +166,16 @@ public:
     });
 
     fmt::print("\n");
-    fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality");
+    fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality", "Migration");
     for (int id : botIndex) {
-      fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% |\n",
+      fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
             std::get<0>(bots[id]),
             allHealthy(cities[id]),
             allInfected(cities[id]),
             cities[id].infectionRate,
             cities[id].contagionRate,
-            cities[id].lethalityRate
+            cities[id].lethalityRate,
+            cities[id].migrationRate
             );
     }
   }

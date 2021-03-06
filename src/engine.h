@@ -36,8 +36,6 @@ constexpr int kGlobalInfectionRate = 1;
 constexpr int kGlobalContagionRate = 2;
 constexpr int kGlobalLethalityRate = 2;
 
-using BotReturn = std::array<Action, 3>;
-using BotFunction = std::function<BotReturn(int, int, int)>;
 
 struct City {
   int healthy = 99;
@@ -51,6 +49,10 @@ struct City {
 };
 
 
+using BotReturn = std::array<Action, 3>;
+using BotFunction = std::function<BotReturn(int, int, const City&)>;
+
+
 inline void decrease(int &variable, int value) {
   if (variable > value) {
     variable -= value;
@@ -59,13 +61,16 @@ inline void decrease(int &variable, int value) {
   }
 }
 
+
 inline int allHealthy(City &city) {
   return city.healthy + city.healthyIsolated;
 }
 
+
 inline int allInfected(City &city) {
   return city.infected + city.infectedIsolated;
 }
+
 
 [[nodiscard]]
 inline bool doLocalAction(Action action, City &city) {
