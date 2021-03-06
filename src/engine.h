@@ -11,14 +11,13 @@ enum class Action {
   kResearchImmunology,    // Research Immunology [Effects: Reduce local Lethality Rate by 4%]
   kResearchVaccination,   // Research Vaccination [Effects: Reduce local Infection Rate by 2, Reduce local Contagion Rate by 4%, reduce local Lethality Rate by 2%]
   kGiveCure,      // Give Cure [Effects: Convert 10 local Infected to Healthy]
-  kQuarantine,    // Quarantine [Effects: Isolate 30 local people for one Turn, they will be remove from the Contagion computation]
-  kKill,          // Kill [Effects: Remove 30 local Infected]
-  kOpenBorder,    // [x] Open Borders [Effects: Increase local Migration Rate by 10%]
-  kCloseBorder,   // [x] Close Borders [Effects: Decrease local Migration Rate by 10%]
-  kBioTerrorism,  // [ ] BioTerrorism [Effects: Convert 4 global Healthy to Infected]
-  kDissemination, // [x] Dissemination [Effects: Increase global Infection Rate by 1, increase global Contagion Rate by 2%]
-  kWeaponization, // [x] Weaponization [Effects: Increase global Infection Rate by 1, increase global Lethality Rate by 2%]
-  kPacification,  // [x] Pacification [Effects: Decrease global Infection Rate by 1, decrease global Contagion Rate by 1%, decrease global Lethality Rate by 1%]
+  kQuarantine,    // Kill [Effects: Remove 30 local Infected]
+  kOpenBorder,    // Open Borders [Effects: Increase local Migration Rate by 10%]
+  kCloseBorder,   // Close Borders [Effects: Decrease local Migration Rate by 10%]
+  kBioTerrorism,  // BioTerrorism [Effects: Convert 4 global Healthy to Infected]
+  kDissemination, // Dissemination [Effects: Increase global Infection Rate by 1, increase global Contagion Rate by 2%]
+  kWeaponization, // Weaponization [Effects: Increase global Infection Rate by 1, increase global Lethality Rate by 2%]
+  kPacification,  // Pacification [Effects: Decrease global Infection Rate by 1, decrease global Contagion Rate by 1%, decrease global Lethality Rate by 1%]
 };
 
 // Local modifier
@@ -40,8 +39,6 @@ constexpr int kGlobalLethalityRate = 2;
 struct City {
   int healthy = 99;
   int infected = 1;
-  int healthyIsolated = 0;
-  int infectedIsolated = 0;
   int infectionRate = 5;
   int contagionRate = 5;
   int lethalityRate = 5;
@@ -63,12 +60,12 @@ inline void decrease(int &variable, int value) {
 
 
 inline int allHealthy(City &city) {
-  return city.healthy + city.healthyIsolated;
+  return city.healthy;
 }
 
 
 inline int allInfected(City &city) {
-  return city.infected + city.infectedIsolated;
+  return city.infected;
 }
 
 
@@ -96,19 +93,7 @@ inline bool doLocalAction(Action action, City &city) {
         city.healthy += cured;
       }
       break;
-    case Action::kQuarantine: {
-        if (city.infected + city.healthy == 0) {
-          break;
-        }
-        const int healthyIsolated = kLocalQuarantine * city.healthy / (city.infected + city.healthy);
-        decrease(city.healthy, healthyIsolated);
-        city.healthyIsolated += healthyIsolated;
-        const int infectedIsolated = kLocalQuarantine - healthyIsolated;
-        decrease(city.infected, infectedIsolated);
-        city.infectedIsolated += infectedIsolated;
-      }
-      break;
-    case Action::kKill:
+    case Action::kQuarantine:
       decrease(city.infected, kLocalKill);
       break;
     case Action::kOpenBorder:

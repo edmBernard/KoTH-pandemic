@@ -115,16 +115,6 @@ public:
         }
         const int dead = static_cast<int>(std::floor(city.infected * city.lethalityRate / 100.f));
         decrease(city.infected, dead);
-        const int deadInIsolation = static_cast<int>(std::floor(city.infectedIsolated * city.lethalityRate / 100.f));
-        decrease(city.infectedIsolated, deadInIsolation);
-      }
-
-      // Phase 7: Free from quarantine
-      for (auto &city : cities) {
-        city.healthy += city.healthyIsolated;
-        city.infected += city.infectedIsolated;
-        city.healthyIsolated = 0;
-        city.infectedIsolated = 0;
       }
 
       // Phase: Players turn

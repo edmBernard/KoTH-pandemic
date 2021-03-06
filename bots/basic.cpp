@@ -4,11 +4,7 @@ RegisterBot passive("passive", [](int step, int id, const City &) -> BotReturn {
   return {Action::kDoNoThing, Action::kDoNoThing, Action::kDoNoThing};
 });
 
-RegisterBot killer("killer", [](int step, int id, const City &) -> BotReturn {
-  return {Action::kKill, Action::kKill, Action::kKill};
-});
-
-RegisterBot lockDown("lockDown", [](int step, int id, const City &) -> BotReturn {
+RegisterBot lockDown("killer", [](int step, int id, const City &) -> BotReturn {
   return {Action::kQuarantine, Action::kQuarantine, Action::kQuarantine};
 });
 
