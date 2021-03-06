@@ -78,22 +78,27 @@ inline bool doLocalAction(Action action, City &city) {
       break;
 
     case Action::kGiveCure: {
-        const int cured = city.infected >= kLocalGiveCure ? kLocalGiveCure : city.infected;
+        const int cured = std::min(city.infected, kLocalGiveCure);
         city.infected -= cured;
         city.healthy += cured;
       }
       break;
+
     case Action::kQuarantine:
       decrease(city.infected, kLocalKill);
       break;
+
     case Action::kOpenBorder:
       city.migrationRate += kLocalOpenBorder;
       break;
+
     case Action::kCloseBorder:
       decrease(city.migrationRate, kLocalCloseBorder);
       break;
+
     case Action::kDoNoThing:
       break;
+
     default:
       // if it's a global action
       return false;
@@ -101,13 +106,14 @@ inline bool doLocalAction(Action action, City &city) {
   return true;
 }
 
+
 inline void doGlobalAction(const std::vector<Action> &actions, std::vector<City> &cities) {
   int bioTerrorismCounter = 0;
   for (auto action : actions) {
     for (auto &city : cities) {
       switch(action) {
         case Action::kBioTerrorism: {
-            const int toInfect = city.healthy >= kGlobalInfectionRate * 4 ? kGlobalInfectionRate * 4 : city.healthy;
+            const int toInfect = std::min(city.healthy, kGlobalInfectionRate * 4);
             city.infected += toInfect;
             city.healthy -= toInfect;
           }

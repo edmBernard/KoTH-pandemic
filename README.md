@@ -5,7 +5,7 @@ A simple King of The Hill game. The goal is to allow user to create bot that pla
 The game implemented on this [repository](https://github.com/edmBernard/KoTH-pandemic) is a reimplementation of this [game](https://codegolf.stackexchange.com/questions/70135/koth-a-world-wide-pandemic).
 
 
-## Compilation, Tests and Documentations
+## Compilation
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 

@@ -92,7 +92,7 @@ public:
 
       // Phase 4: Infection
       for (auto &city : cities) {
-        const int toInfect = city.healthy >= city.infectionRate ? city.infectionRate : city.healthy;
+        const int toInfect = std::min(city.healthy, city.infectionRate);
         city.infected += toInfect;
         city.healthy -= toInfect;
       }
@@ -103,7 +103,7 @@ public:
           continue;
         }
         const int toInfect = static_cast<int>(std::ceil(city.infected * city.contagionRate / 100.f));
-        const int converted = city.healthy >= toInfect ? toInfect : city.healthy;
+        const int converted = std::min(city.healthy, toInfect);
         city.infected += converted;
         city.healthy -= converted;
       }
@@ -156,9 +156,9 @@ public:
     });
 
 
-    fmt::print("\n+{:-^107}+\n", " Leader Board ");  // use '*' as a fill char
+    fmt::print("+{:-^107}+\n", " Leader Board ");
     fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Rank", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality", "Migration");
-    fmt::print("+{:-^107}+\n", "");  // use '*' as a fill char
+    fmt::print("+{:-^107}+\n", "");
     for (int i = 0; i < botIndex.size(); ++i) {
       const int id = botIndex[i];
       fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
