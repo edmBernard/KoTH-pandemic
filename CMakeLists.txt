@@ -25,6 +25,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/bots)
 
 #**************************************************************************************************
 # Set compiler ************************************************************************************
+
 if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
   add_compile_options(/std:c++latest /Oy /utf-8)
 else()
