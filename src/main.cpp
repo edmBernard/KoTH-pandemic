@@ -20,7 +20,8 @@ int main(int argc, char *argv[]) try {
   // clang-format off
   options.add_options()
     ("h,help", "Print help")
-    ("n,nruns", "number of run", cxxopts::value<int>()->default_value("50"), "NRUNS")
+    ("n,nruns", "number of run", cxxopts::value<int>()->default_value("100"), "NRUNS")
+    ("s,step", "number of step", cxxopts::value<int>()->default_value("50"), "STEP")
     ;
   // clang-format on
   options.parse_positional({"nruns"});
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) try {
     return EXIT_SUCCESS;
   }
 
-  Controller engine(result["nruns"].as<int>());
+  Controller engine(result["nruns"].as<int>(), result["step"].as<int>());
   engine.run();
 
   return EXIT_SUCCESS;

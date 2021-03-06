@@ -39,10 +39,22 @@ constexpr int kGlobalLethalityRate = 2;
 struct City {
   int healthy = 99;
   int infected = 1;
+  int dead = 0;
   int infectionRate = 5;
   int contagionRate = 5;
   int lethalityRate = 5;
   int migrationRate = 5;
+
+  City& operator+=(const City& city) {
+    this->healthy += city.healthy;
+    this->infected += city.infected;
+    this->dead += city.dead;
+    this->infectionRate += city.infectionRate;
+    this->contagionRate += city.contagionRate;
+    this->lethalityRate += city.lethalityRate;
+    this->migrationRate += city.migrationRate;
+    return *this;
+  }
 };
 
 
