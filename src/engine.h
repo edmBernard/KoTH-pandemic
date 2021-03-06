@@ -6,17 +6,18 @@
 
 enum class Action {
   kDoNoThing,             // Do Nothing
+  kResearchMicrobiology,  // Research Microbiology [Effects: Reduce local Infection Rate by 4]
   kResearchEpidemiology,  // Research Epidemiology [Effects: Reduce local Contagion Rate by 8%]
   kResearchImmunology,    // Research Immunology [Effects: Reduce local Lethality Rate by 4%]
-  kResearchVaccination,   // Research Vaccination [Effects: Reduce local Contagion Rate by 4%, reduce local Lethality Rate by 2%]
+  kResearchVaccination,   // Research Vaccination [Effects: Reduce local Infection Rate by 2, Reduce local Contagion Rate by 4%, reduce local Lethality Rate by 2%]
   kGiveCure,    // Give Cure [Effects: Convert 10 local Infected to Healthy]
   kQuarantine,  // Quarantine [Effects: Isolate 30 local people for one Turn, they will be remove from the Contagion computation]
   kKill,        // Kill [Effects: Remove 30 local Infected]
 };
 
+constexpr int kValueResearchMicrobiology = 4;
 constexpr int kValueResearchEpidemiology = 8;
-constexpr int kValueResearchImmunology = 2;
-constexpr int kValueResearchVaccination = 1;
+constexpr int kValueResearchImmunology = 4;
 constexpr int kValueGiveCure = 10;
 constexpr int kValueQuarantine = 30;
 constexpr int kValueKill = 30;
@@ -29,6 +30,7 @@ struct City {
   int infected = 1;
   int healthyIsolated = 0;
   int infectedIsolated = 0;
+  int infectionRate = 5;
   int contagionRate = 5;
   int lethalityRate = 5;
 };
@@ -39,6 +41,14 @@ inline void decrease(int &variable, int value) {
   } else {
     variable = 0;
   }
+}
+
+inline int allHealthy(City &city) {
+  return city.healthy + city.healthyIsolated;
+}
+
+inline int allInfected(City &city) {
+  return city.infected + city.infectedIsolated;
 }
 
 inline void doAction(Action action, City &city) {
@@ -53,8 +63,9 @@ inline void doAction(Action action, City &city) {
       break;
 
     case Action::kResearchVaccination:
-      decrease(city.contagionRate, kValueResearchVaccination * 2);
-      decrease(city.lethalityRate, kValueResearchVaccination);
+      decrease(city.contagionRate, kValueResearchMicrobiology / 2);
+      decrease(city.lethalityRate, kValueResearchEpidemiology / 2);
+      decrease(city.infectionRate, kValueResearchImmunology / 2);
       break;
 
     case Action::kGiveCure: {

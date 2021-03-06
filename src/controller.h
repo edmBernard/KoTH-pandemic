@@ -37,7 +37,7 @@ public:
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::uniform_int_distribution<int> mutationActionChoice(0, 1);
+    std::uniform_int_distribution<int> mutationActionChoice(0, 2);
 
     spdlog::info("Run Start");
     for (int step = 1; step <= m_numberRuns; ++step) {
@@ -51,7 +51,10 @@ public:
             city.contagionRate += 5;
             break;
           case 1:
-            city.lethalityRate += 1;
+            city.infectionRate += 2;
+            break;
+          case 2:
+            city.lethalityRate += 5;
             break;
           default:
             throw std::runtime_error("Mutation action out of range");
@@ -61,12 +64,19 @@ public:
       // Phase 2: Reproduction
       if (step % 5 == 0) {
         for (auto &city : cities) {
-          city.healthy += (city.healthy + city.healthyIsolated) / 2;
-          city.infected += (city.infected + city.infectedIsolated) / 2;
+          city.healthy += allHealthy(city) / 2;
+          city.infected += allInfected(city) / 2;
         }
       }
 
       // Phase 3: Migration
+
+      // Phase 4: Infection
+      for (auto &city : cities) {
+        const int toInfect = city.healthy >= city.infectionRate ? city.infectionRate : city.healthy;
+        city.infected += toInfect;
+        city.healthy -= toInfect;
+      }
 
       // Phase 5: Contagion
       for (auto &city : cities) {
@@ -115,19 +125,30 @@ public:
   void show() {
 
     std::sort(botIndex.begin(), botIndex.end(), [&](int a, int b) {
-      if (cities[a].healthy > cities[b].healthy) {
+      const int healthyA = allHealthy(cities[a]);
+      const int healthyB = allHealthy(cities[b]);
+
+      if (healthyA == healthyB) {
+        if (allInfected(cities[a]) > allInfected(cities[b])) {
+          return true;
+        }
+        return false;
+      }
+
+      if (healthyA > healthyB) {
         return true;
       }
       return false;
     });
 
     fmt::print("\n");
-    fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Contagion", "Lethality");
+    fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality");
     for (int id : botIndex) {
-      fmt::print("| {:>20} | {:>10} | {:>10} | {:>9}% | {:>9}% |\n",
+      fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% |\n",
             std::get<0>(bots[id]),
-            cities[id].healthy + cities[id].healthyIsolated,
-            cities[id].infected + cities[id].infectedIsolated,
+            allHealthy(cities[id]),
+            allInfected(cities[id]),
+            cities[id].infectionRate,
             cities[id].contagionRate,
             cities[id].lethalityRate
             );
