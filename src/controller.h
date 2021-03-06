@@ -165,10 +165,14 @@ public:
       return false;
     });
 
-    fmt::print("\n");
-    fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality", "Migration");
-    for (int id : botIndex) {
-      fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
+
+    fmt::print("\n+{:-^107}+\n", " Leader Board ");  // use '*' as a fill char
+    fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Rank", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality", "Migration");
+    fmt::print("+{:-^107}+\n", "");  // use '*' as a fill char
+    for (int i = 0; i < botIndex.size(); ++i) {
+      const int id = botIndex[i];
+      fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
+            i,
             std::get<0>(bots[id]),
             allHealthy(cities[id]),
             allInfected(cities[id]),
@@ -178,6 +182,7 @@ public:
             cities[id].migrationRate
             );
     }
+    fmt::print("+{:-^107}+\n", "");
   }
 
   static std::vector<std::tuple<std::string, BotFunction>> &GetBotRegister() {
