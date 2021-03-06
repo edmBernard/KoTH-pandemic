@@ -106,10 +106,9 @@ public:
           if (city.contagionRate == 0) {
             continue;
           }
-          const int toInfect = static_cast<int>(std::ceil(city.infected * city.contagionRate / 100.f));
-          const int converted = std::min(city.healthy, toInfect);
-          city.infected += converted;
-          city.healthy -= converted;
+          const int toInfect = std::min(city.healthy, static_cast<int>(std::ceil(city.infected * city.contagionRate / 100.f)));
+          city.infected += toInfect;
+          city.healthy -= toInfect;
         }
 
         // Phase 6: Extinction
@@ -119,6 +118,7 @@ public:
           }
           const int dead = static_cast<int>(std::floor(city.infected * city.lethalityRate / 100.f));
           decrease(city.infected, dead);
+          city.dead += dead;
         }
 
         // Phase: Players turn
@@ -156,36 +156,38 @@ public:
       const int healthyB = cities[b].healthy;
 
       if (healthyA == healthyB) {
-        if (cities[a].infected > cities[b].infected) {
-          return true;
+        const int infectedA = cities[a].infected;
+        const int infectedB = cities[b].infected;
+
+        if (infectedA == infectedB) {
+          return cities[a].dead < cities[b].dead;
         }
-        return false;
+
+        return infectedA > infectedB;
       }
 
-      if (healthyA > healthyB) {
-        return true;
-      }
-      return false;
+      return healthyA > healthyB;
     });
 
 
-    fmt::print("+{:-^107}+\n", " Leader Board ");
-    fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Rank", "Bot Name", "Healthy", "Infected", "Infection", "Contagion", "Lethality", "Migration");
-    fmt::print("+{:-^107}+\n", "");
+    fmt::print("+{:-^120}+\n", " Leader Board ");
+    fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Rank", "Bot Name", "Healthy", "Infected", "Dead", "Infection", "Contagion", "Lethality", "Migration");
+    fmt::print("+{:-^120}+\n", "");
     for (int i = 0; i < cityIndex.size(); ++i) {
       const int id = cityIndex[i];
-      fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
+      fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
             i,
             std::get<0>(bots[id]),
             cities[id].healthy / normalization,
             cities[id].infected / normalization,
+            cities[id].dead / normalization,
             cities[id].infectionRate / normalization,
             cities[id].contagionRate / normalization,
             cities[id].lethalityRate / normalization,
             cities[id].migrationRate / normalization
             );
     }
-    fmt::print("+{:-^107}+\n", "");
+    fmt::print("+{:-^120}+\n", "");
   }
 
   static std::vector<std::tuple<std::string, BotFunction>> &GetBotRegister() {
