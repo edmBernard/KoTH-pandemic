@@ -4,6 +4,9 @@ A simple King of The Hill game. The goal is to allow user to create bot that pla
 
 The game implemented on this [repository](https://github.com/edmBernard/KoTH-pandemic) is a reimplementation of this [game](https://codegolf.stackexchange.com/questions/70135/koth-a-world-wide-pandemic).
 
+## Add a Bot
+
+To add a new bot. You just have to create new `*.cpp` file inside `bots` directory. There is some bots example in the `bots/basic.cpp` file. Keep one bots per file. The game can be run locally with the `koth-pandemic` executable otherwise the game is run with github action on each push on the `main` branch and on each pull request.
 
 ## Compilation
 
@@ -33,6 +36,4 @@ the server executable is named `koth-pandemic`
 
 ## Disclaimer
 
-It's a toy project. Mainly used to learn uwebsocket library.
-I also try to make a more data oriented design.
-So if you spot error, improvement comments are welcome.
+It's a toy project. So if you spot error, improvement comments are welcome.
