@@ -20,6 +20,7 @@ public:
 
   void run() {
 
+    spdlog::info("Run Start");
     for (int step = 1; step <= m_numberRuns; ++step) {
       spdlog::debug("Iteration : {:05}", step);
 
@@ -27,9 +28,9 @@ public:
 
         const auto &[name, bot] = GetBotRegister()[id];
         m_state = bot(step, id, m_state);
-        std::cout << name << " m_state: " << m_state << std::endl;
       }
     }
+    spdlog::info("Run End");
   }
 
   static std::vector<std::tuple<std::string, std::function<int(int, int, int)>>> &GetBotRegister() {
