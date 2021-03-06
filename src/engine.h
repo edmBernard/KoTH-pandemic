@@ -59,16 +59,6 @@ inline void decrease(int &variable, int value) {
 }
 
 
-inline int allHealthy(City &city) {
-  return city.healthy;
-}
-
-
-inline int allInfected(City &city) {
-  return city.infected;
-}
-
-
 [[nodiscard]]
 inline bool doLocalAction(Action action, City &city) {
 

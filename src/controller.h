@@ -64,8 +64,8 @@ public:
       // Phase 2: Reproduction
       if (step % 5 == 0) {
         for (auto &city : cities) {
-          city.healthy += allHealthy(city) / 2;
-          city.infected += allInfected(city) / 2;
+          city.healthy += city.healthy / 2;
+          city.infected += city.infected / 2;
         }
       }
 
@@ -139,11 +139,11 @@ public:
   void show() {
 
     std::sort(botIndex.begin(), botIndex.end(), [&](int a, int b) {
-      const int healthyA = allHealthy(cities[a]);
-      const int healthyB = allHealthy(cities[b]);
+      const int healthyA = cities[a].healthy;
+      const int healthyB = cities[b].healthy;
 
       if (healthyA == healthyB) {
-        if (allInfected(cities[a]) > allInfected(cities[b])) {
+        if (cities[a].infected > cities[b].infected) {
           return true;
         }
         return false;
@@ -164,8 +164,8 @@ public:
       fmt::print("| {:>4} | {:>20} | {:>10} | {:>10} | {:>10} | {:>9}% | {:>9}% | {:>9}% |\n",
             i,
             std::get<0>(bots[id]),
-            allHealthy(cities[id]),
-            allInfected(cities[id]),
+            cities[id].healthy,
+            cities[id].infected,
             cities[id].infectionRate,
             cities[id].contagionRate,
             cities[id].lethalityRate,
