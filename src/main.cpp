@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) try {
   // clang-format off
   options.add_options()
     ("h,help", "Print help")
-    ("n,nruns", "number of run", cxxopts::value<int>()->default_value("1000"), "NRUNS")
+    ("n,nruns", "number of run", cxxopts::value<int>()->default_value("100"), "NRUNS")
     ;
   // clang-format on
   options.parse_positional({"nruns"});

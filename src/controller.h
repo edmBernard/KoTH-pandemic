@@ -37,20 +37,21 @@ public:
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::uniform_int_distribution<int> mutationAction(0, 1);
+    std::uniform_int_distribution<int> mutationActionChoice(0, 1);
 
     spdlog::info("Run Start");
     for (int step = 1; step <= m_numberRuns; ++step) {
       spdlog::debug("Iteration : {:05}", step);
 
       // Phase 1: Mutation
+      const int mutationAction = mutationActionChoice(gen);
       for (auto &city : cities) {
-        switch (mutationAction(gen)) {
+        switch (mutationAction) {
           case 0:
             city.contagionRate += 5;
             break;
           case 1:
-            city.lethalityRate += 5;
+            city.lethalityRate += 1;
             break;
           default:
             throw std::runtime_error("Mutation action out of range");
@@ -60,8 +61,8 @@ public:
       // Phase 2: Reproduction
       if (step % 5 == 0) {
         for (auto &city : cities) {
-          city.healthy += city.healthy / 2;
-          city.infected += city.infected / 2;
+          city.healthy += (city.healthy + city.healthyIsolated) / 2;
+          city.infected += (city.infected + city.infectedIsolated) / 2;
         }
       }
 
@@ -72,7 +73,7 @@ public:
         if (city.contagionRate == 0) {
           continue;
         }
-        const int toInfect = (city.infected + city.contagionRate -1) / city.contagionRate;
+        const int toInfect = static_cast<int>((city.infected * city.contagionRate + 99.f) / 100.f);
         const int converted = city.healthy >= toInfect ? toInfect : city.healthy;
         city.infected += converted;
         city.healthy -= converted;
@@ -83,8 +84,10 @@ public:
         if (city.lethalityRate == 0) {
           continue;
         }
-        const int dead = (city.infected + city.lethalityRate -1) / city.lethalityRate;
+        const int dead = static_cast<int>((city.infected * city.lethalityRate) / 100.f);
         decrease(city.infected, dead);
+        const int deadInIsolation = static_cast<int>((city.infectedIsolated * city.lethalityRate) / 100.f);
+        decrease(city.infectedIsolated, deadInIsolation);
       }
 
       // Phase 7: Free from quarantine
@@ -118,9 +121,16 @@ public:
       return false;
     });
 
+    fmt::print("\n");
     fmt::print("| {:>20} | {:>10} | {:>10} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected", "Contagion", "Lethality");
     for (int id : botIndex) {
-      fmt::print("| {:>20} | {:>10} | {:>10} | {:>9}% | {:>9}% |\n", std::get<0>(bots[id]), cities[id].healthy, cities[id].infected, cities[id].contagionRate, cities[id].lethalityRate);
+      fmt::print("| {:>20} | {:>10} | {:>10} | {:>9}% | {:>9}% |\n",
+            std::get<0>(bots[id]),
+            cities[id].healthy + cities[id].healthyIsolated,
+            cities[id].infected + cities[id].infectedIsolated,
+            cities[id].contagionRate,
+            cities[id].lethalityRate
+            );
     }
   }
 

@@ -15,8 +15,8 @@ enum class Action {
 };
 
 constexpr int kValueResearchEpidemiology = 8;
-constexpr int kValueResearchImmunology = 4;
-constexpr int kValueResearchVaccination = 2;
+constexpr int kValueResearchImmunology = 2;
+constexpr int kValueResearchVaccination = 1;
 constexpr int kValueGiveCure = 10;
 constexpr int kValueQuarantine = 30;
 constexpr int kValueKill = 30;
@@ -69,10 +69,10 @@ inline void doAction(Action action, City &city) {
         }
         const int healthyIsolated = kValueQuarantine * city.healthy / (city.infected + city.healthy);
         decrease(city.healthy, healthyIsolated);
-        city.healthyIsolated = healthyIsolated;
+        city.healthyIsolated += healthyIsolated;
         const int infectedIsolated = kValueQuarantine - healthyIsolated;
         decrease(city.infected, infectedIsolated);
-        city.infectedIsolated = infectedIsolated;
+        city.infectedIsolated += infectedIsolated;
       }
       break;
     case Action::kKill:
