@@ -109,14 +109,19 @@ public:
       }
 
       // Phase: Players turn
+      // Local Action
+      std::vector<Action> globalActions;
       std::shuffle(botIndex.begin(), botIndex.end(), gen);
       for (int id : botIndex) {
         const auto &[name, bot] = bots[id];
         for (auto action : bot(step, id, 1)) {
-          doAction(action, cities[id]);
+          if (!doLocalAction(action, cities[id])) {
+            globalActions.push_back(action);
+          };
         }
       }
-
+      // Global Action
+      doGlobalAction(globalActions, cities);
     }
     show();
     spdlog::info("Run End");

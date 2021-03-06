@@ -13,5 +13,5 @@ RegisterBot lockDown("lockDown", [](int step, int id, int input) -> BotReturn {
 });
 
 RegisterBot bot01("bot01", [](int step, int id, int input) -> BotReturn {
-  return {Action::kResearchVaccination, Action::kResearchEpidemiology, Action::kQuarantine};
+  return {Action::kResearchVaccination, Action::kResearchEpidemiology, Action::kGiveCure};
 });
