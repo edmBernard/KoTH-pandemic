@@ -9,6 +9,8 @@
 #include <assert.h>
 
 #include <spdlog/spdlog.h>
+#include <fmt/core.h>
+
 
 #include "engine.h"
 
@@ -60,7 +62,23 @@ public:
       }
 
     }
+    show();
     spdlog::info("Run End");
+  }
+
+  void show() {
+
+    std::sort(botIndex.begin(), botIndex.end(), [&](int a, int b) {
+      if (cities[a].healthy > cities[b].healthy) {
+        return true;
+      }
+      return false;
+    });
+
+    fmt::print("| {:>20} | {:>10} | {:>10} |\n", "Bot Name", "Healthy", "Infected");
+    for (int id : botIndex) {
+      fmt::print("| {:>20} | {:>10} | {:>10} |\n", std::get<0>(bots[id]), cities[id].healthy, cities[id].infected);
+    }
   }
 
   static std::vector<std::tuple<std::string, BotFunction>> &GetBotRegister() {

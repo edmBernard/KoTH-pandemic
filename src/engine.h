@@ -64,6 +64,9 @@ inline void doAction(Action action, City &city) {
       }
       break;
     case Action::kQuarantine: {
+        if (city.infected + city.healthy == 0) {
+          break;
+        }
         const int healthyIsolated = kValueQuarantine * city.healthy / (city.infected + city.healthy);
         decrease(city.healthy, healthyIsolated);
         city.healthyIsolated = healthyIsolated;
